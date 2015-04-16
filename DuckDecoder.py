@@ -1,8 +1,12 @@
+############## DuckDecoder ##############
+#  
+#  Description:   Python script to decode/ display usb rubber ducky inject.bin files
+#    Author(s):   JPaulMora (@jpaulmora)
+#      Version:   0.1.b
 #
-#
-#
-#
-#
+#   Program currently supports all characters on an english keyboard mapping, I have been getting trouble identifying key
+#   combinations such as ALT ENTER U since its output in hex is the same as of a STRING u command. This also happens with
+#   UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW. they get translated to (STRING) u,d,l,r respectively.
 
 
 import binascii 
@@ -49,10 +53,10 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	Result = []
 	
 	# if lang == "en":           # languages will be supported adding lists on ifs, and default to english if variable not set.
-	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BK_SPACE"]
-	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BK_SPACE"]
+	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BK_SPACE",'`',"TAB"]
+	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BK_SPACE",'~',"TAB"]
 	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0"]
-	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a']
+	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b']
 #	HexTypes = ['00', '01', '02', '04', '08']
 
 	if mode == 1:                         # Mode 1 Converts the code and also adds all the "Commands" needed for re-encoding,
@@ -80,6 +84,9 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 					String = 0
 				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
 					Result.append("\nBACKSPACE " )
+					String = 0
+				if str(Letters[HexLetters.index(letters[i])]) == "TAB":
+					Result.append("\nTAB " )
 					String = 0
 				else:
 					Result.append(Letters[HexLetters.index(letters[i])])
@@ -134,7 +141,7 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 				Delay = Delay + int(type[i],16)
 				String = 0
 		
-	else:                                 # Mode two is intended just to let people know what the inject.bin does, it 
+	else:                                 # Mode two (display) is intended just to let people know what the inject.bin does, it 
 										  # displays all text and key combinations but without commands. ie.
 										  #
 										  # Hello World!
@@ -146,32 +153,35 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 				
 				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
 					del Result[int(len(Result)) - 1]
-					Delay = 0
+					
+				if str(Letters[HexLetters.index(letters[i])]) == "TAB":
+					Result.append("     " )
+					
 				else:
 					Result.append(Letters[HexLetters.index(letters[i])])
-					Delay = 0
+					
 				
 			elif letters[i] in HexLetters and type[i] == "01":
 			
 				Result.append("\nCONTROL " + str(AltLetters[HexLetters.index(letters[i])]) + "\n")
-				Delay = 0
+				
 				
 				
 			elif letters[i] in HexLetters and type[i] == "02":
 
 				Result.append(CapLetters[HexLetters.index(letters[i])])
-				Delay = 0
+				
 			
 			elif letters[i] in HexLetters and type[i] == "04":
 
 				Result.append("\nALT " + str(AltLetters[HexLetters.index(letters[i])]))
-				Delay = 0
+				
 				
 					
 			elif letters[i] in HexLetters and type[i] == "08":
 
 				Result.append("\nGUI " + str(AltLetters[HexLetters.index(letters[i])]))
-				Delay = 0
+				
 				
 
 
@@ -181,7 +191,7 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	
 def usage(reason, ecode):
 	print " Usage: " + str(args[0]) + " < display|decode > inject.bin\n\n Example: " + str(args[0]) + " display /Documents/inject.bin\n"
-	print " Error: "+ reason + "\n"
+	print reason + "\n"
 	sys.exit(ecode)
 	
 
@@ -191,7 +201,7 @@ if len(args) > 1 and len(args) < 5 :
 	try:
 		filename = os.path.realpath(args[2])
 	except IndexError:
-		usage("File not found", 1)
+		usage("Error: File not found", 1)
 	else:
 		List = dsem(hexstr(filename), 2)
 		mode = args[1]
@@ -203,7 +213,7 @@ if len(args) > 1 and len(args) < 5 :
 	elif mode == "display":
 		Result = letiscover(chars,types,0)
 	else:
-		usage("No such option", -1)
+		usage("Error: No such option", -1)
 		
 	string = ""
 	for i in range(0,len(Result)):
