@@ -1,1 +1,23 @@
 # Duck-Decoder
+
+## Introduction
+
+A while ago I went to recieve some classes to annother country lucky for me, I already had my duck! Often in my trip
+I found myself near unlocked computers which I could dump lssas or backdoor depending the case, for this I started doing a whole bunch of different payloads and scripts to pwn all of these computers!
+
+Sadly for me, since I wasnt using my own computer at the time (for security) I erased the whole account on the system except for my backed up source files.. or so I thought! I had mistakenly backed up only the *inject.bin* files and all of my thousands of lines of source code were gone now! I thought, if I just keep the .bins classified I could still reuse them to pwn computers until, a Win 8 computer comes up aviable to hack and none of my scripts work!
+
+This project was the result of having to figure out what was inside all of those *inject.bin* files that I had saved over time for on-the-fly payload changing. This script solved my problem of often losing or accidentaly deleting the source code files of all my hacks.
+
+## How to use it
+
+The project was made using python 2.7.3, to run it you can do:
+
+> python DuckDecoder.py 
+
+Run it without arguments to display the help menu.
+
+## Want support for a different keyboard?
+
+Pending section..
+
