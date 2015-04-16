@@ -47,10 +47,12 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	Delay = 0
 	String = 0
 	Result = []
-	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0"]
-	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")"]
+	
+	# if lang == "en":           # languages will be supported adding lists on ifs, and default to english if variable not set.
+	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BK_SPACE"]
+	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BK_SPACE"]
 	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0"]
-	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27']
+	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a']
 #	HexTypes = ['00', '01', '02', '04', '08']
 
 	if mode == 1:                         # Mode 1 Converts the code and also adds all the "Commands" needed for re-encoding,
@@ -75,6 +77,9 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 					String = 1
 				if str(Letters[HexLetters.index(letters[i])]) == "\n":
 					Result.append("\nENTER " )
+					String = 0
+				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
+					Result.append("\nBACKSPACE " )
 					String = 0
 				else:
 					Result.append(Letters[HexLetters.index(letters[i])])
@@ -114,6 +119,8 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 				Result.append("\nGUI " + str(AltLetters[HexLetters.index(letters[i])]))
 				Delay = 0
 				String = 0
+			
+
 				
 			elif letters[i] == '00':
 			
@@ -137,14 +144,18 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 		
 			if letters[i] in HexLetters and type[i] == "00":
 				
-				Result.append(Letters[HexLetters.index(letters[i])])
-				Delay = 0
+				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
+					del Result[int(len(Result)) - 1]
+					Delay = 0
+				else:
+					Result.append(Letters[HexLetters.index(letters[i])])
+					Delay = 0
 				
 			elif letters[i] in HexLetters and type[i] == "01":
 			
-				Result.append("\nCONTROL " + str(AltLetters[HexLetters.index(letters[i])]))
+				Result.append("\nCONTROL " + str(AltLetters[HexLetters.index(letters[i])]) + "\n")
 				Delay = 0
-				String = 0
+				
 				
 			elif letters[i] in HexLetters and type[i] == "02":
 
@@ -155,40 +166,45 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 
 				Result.append("\nALT " + str(AltLetters[HexLetters.index(letters[i])]))
 				Delay = 0
-				String = 0
+				
 					
 			elif letters[i] in HexLetters and type[i] == "08":
 
 				Result.append("\nGUI " + str(AltLetters[HexLetters.index(letters[i])]))
 				Delay = 0
-				String = 0
+				
 
 
 				
 	Result.append("\n\n")
 	return Result
 	
-def usage():
-	print "Usage: " + str(args[0]) + " < display|decode > inject.bin\n\n Example: " + str(args[0]) + " display /Documents/inject.bin\n"
-	exit()
+def usage(reason, ecode):
+	print " Usage: " + str(args[0]) + " < display|decode > inject.bin\n\n Example: " + str(args[0]) + " display /Documents/inject.bin\n"
+	print " Error: "+ reason + "\n"
+	sys.exit(ecode)
 	
 
 ########################## End of Functions ###################################
 
 if len(args) > 1 and len(args) < 5 :
-	filename = os.path.realpath(args[2])
-	List = dsem(hexstr(filename), 2)
-	mode = args[1]
-	chars = List[::2]
-	types = List[1::2]
+	try:
+		filename = os.path.realpath(args[2])
+	except IndexError:
+		usage("File not found", 1)
+	else:
+		List = dsem(hexstr(filename), 2)
+		mode = args[1]
+		chars = List[::2]
+		types = List[1::2]
 
 	if mode == "decode":
 		Result = letiscover(chars,types,1)
 	elif mode == "display":
 		Result = letiscover(chars,types,0)
 	else:
-		usage()
-	
+		usage("No such option", -1)
+		
 	string = ""
 	for i in range(0,len(Result)):
 	
@@ -196,4 +212,4 @@ if len(args) > 1 and len(args) < 5 :
 
 	print string
 else:
-	usage()
+	usage("",2)
