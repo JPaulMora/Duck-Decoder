@@ -19,5 +19,14 @@ Run it without arguments to display the help menu.
 
 ## Want support for a different keyboard?
 
-Pending section..
+The program finds the position of the duck hex code and translates it by finding its mirror position in another
+list with the letters. To submint a keyboard mapping, make two lists pressing the keys in this order:
+
+![keyboard_mapping] (jpaulmora.github.com/mapping.png)
+
+The lists should look like this, one for shift and one for plain characters:
+
+> Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"etc..]
+> CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"etc..]
+
 
