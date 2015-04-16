@@ -22,7 +22,7 @@ Run it without arguments to display the help menu.
 The program finds the position of the duck hex code and translates it by finding its mirror position in another
 list with the letters. To submint a keyboard mapping, make two lists pressing the keys in this order:
 
-![keyboard_mapping] (jpaulmora.github.com/mapping.png)
+![keyboard_mapping] (https://raw.githubusercontent.com/JPaulMora/Duck-Decoder/master/mapping.png)
 
 The lists should look like this, one for shift and one for plain characters:
 
