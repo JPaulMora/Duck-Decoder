@@ -53,8 +53,8 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	Result = []
 	
 	# if lang == "en":           # languages will be supported adding lists on ifs, and default to english if variable not set.
-	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BK_SPACE",'`',"TAB"]
-	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BK_SPACE",'~',"TAB"]
+	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB"]
+	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BSPACE",'~',"TAB"]
 	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0"]
 	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b']
 #	HexTypes = ['00', '01', '02', '04', '08']
@@ -66,7 +66,7 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 										  # STRING Hello World!
 										  # ENTER
 		for i in range(0,len(letters)):
-		
+			
 			if letters[i] in HexLetters and type[i] == "00":
 			
 				if Delay != 0:
@@ -76,16 +76,17 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 					# it will print the value of Delay, which at this point is the total
 					# delay the original user described in the code (see comments below).
 			
-				if String == 0 and str(Letters[HexLetters.index(letters[i])]) != "\n":
+				elif String == 0 and str(Letters[HexLetters.index(letters[i])]) != "\n":
 					Result.append("\nSTRING " )
 					String = 1
-				if str(Letters[HexLetters.index(letters[i])]) == "\n":
+				elif str(Letters[HexLetters.index(letters[i])]) == "\n":
 					Result.append("\nENTER " )
 					String = 0
-				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
+				elif str(Letters[HexLetters.index(letters[i])]) == "BSPACE":
+					
 					Result.append("\nBACKSPACE " )
 					String = 0
-				if str(Letters[HexLetters.index(letters[i])]) == "TAB":
+				elif str(Letters[HexLetters.index(letters[i])]) == "TAB":
 					Result.append("\nTAB " )
 					String = 0
 				else:
@@ -103,11 +104,14 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
 				
-				if String == 0 and str(CapLetters[HexLetters.index(letters[i])]) != "\nENTER\n":
+				if String == 0 and str(CapLetters[HexLetters.index(letters[i])]) != "\n":
 					Result.append("\nSTRING " )
 					String = 1
-				if str(CapLetters[HexLetters.index(letters[i])]) == "\nENTER\n":
+				if str(CapLetters[HexLetters.index(letters[i])]) == "\n":
 					Result.append("\nENTER " )
+					String = 0
+				if str(CapLetters[HexLetters.index(letters[i])]) == "BSPACE":
+					Result.append("\nBACKSPACE " )
 					String = 0
 				else:
 					Result.append(CapLetters[HexLetters.index(letters[i])])
@@ -151,10 +155,10 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 		
 			if letters[i] in HexLetters and type[i] == "00":
 				
-				if str(Letters[HexLetters.index(letters[i])]) == "BK_SPACE":
+				if str(Letters[HexLetters.index(letters[i])]) == "BSPACE":
 					del Result[int(len(Result)) - 1]
 					
-				if str(Letters[HexLetters.index(letters[i])]) == "TAB":
+				elif str(Letters[HexLetters.index(letters[i])]) == "TAB":
 					Result.append("     " )
 					
 				else:
