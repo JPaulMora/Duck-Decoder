@@ -254,11 +254,11 @@ if len(args) > 1 and len(args) < 5 :
 		filename = os.path.realpath(args[2])
 	except IndexError:
 		usage("Error: File not found", 1)
-	else:
-		List = dsem(hexstr(filename), 2)
-		mode = args[1]
-		chars = List[::2]
-		types = List[1::2]
+		
+	List = dsem(hexstr(filename), 2)
+	mode = args[1]
+	chars = List[::2]
+	types = List[1::2]
 
 	if mode == "decode":
 		Result = letiscover(chars,types,1)
