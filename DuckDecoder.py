@@ -2,7 +2,7 @@
 #  
 #  Description:   Python script to decode/ display usb rubber ducky inject.bin files
 #    Author(s):   JPaulMora (@jpaulmora) 
-#      Version:   0.1.b                
+#      Version:   0.1.c                
 #                                              Copyright (C) 2015  Juan Pablo Mora
 #    
 #    This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 #  Program currently supports all characters on an english keyboard mapping, I have been getting trouble identifying key
-#  combinations such as ALT ENTER U since its output in hex is the same as of a STRING u command. This also happens with
-#  UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW. they get translated to (STRING) u,d,l,r respectively.
-
+#  combinations such as ALT ENTER U since its output in hex is the same as of a STRING u command. 
+#
+#  Arrow keys now working!!
 
 import binascii 
 import os
@@ -68,12 +68,14 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	Result = []
 	
 	# if lang == "en":           # languages will be supported adding lists on ifs, and default to english if variable not set.
-	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB"]
+	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB", "UP", "DOWN", "RIGHT", "LEFT"]
 	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BSPACE",'~',"TAB"]
 	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0"]
-	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b']
+	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b','52','51','4f','50']
 #	HexTypes = ['00', '01', '02', '04', '08']
-
+	Arrows = [ "UP", "DOWN", "RIGHT", "LEFT"]
+	
+	
 	if mode == 1:                         # Mode 1 Converts the code and also adds all the "Commands" needed for re-encoding,
 										  # output of this mode should be DuckEncoder ready. ie.
 										  #
@@ -83,77 +85,93 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 		for i in range(0,len(letters)):
 			
 			if letters[i] in HexLetters and type[i] == "00":
-			
+				LetterPos = HexLetters.index(letters[i]) # Lil shortcut for typing :P
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
-					
 					# if the next character is a letter, and variable Delay is not 0,
 					# it will print the value of Delay, which at this point is the total
 					# delay the original user described in the code (see comments below).
-			
-				elif String == 0 and str(Letters[HexLetters.index(letters[i])]) != "\n":
+					LastDelay = Result[int(len(Result)-1)]
+					if String == 0 and str(Letters[LetterPos]) != "\n" and Result[int(len(Result)-1)] == LastDelay:
+						Result.append("\nSTRING " )
+						String = 0
+						Delay = 0
+						Result.append(Letters[LetterPos])
+					else:
+						Result.append(Letters[LetterPos])
+						
+				elif str(Letters[LetterPos]) in Arrows:
+					Result.append("\n"+ str(Letters[LetterPos]))
+					String = 0
+				elif String == 0 and str(Letters[LetterPos]) != "\n" and str(Letters[LetterPos]) != "TAB":
 					Result.append("\nSTRING " )
 					String = 1
-				elif str(Letters[HexLetters.index(letters[i])]) == "\n":
+					Delay = 0
+					if String == 1:
+						Result.append(Letters[LetterPos])
+				elif str(Letters[LetterPos]) == "\n":
 					Result.append("\nENTER " )
 					String = 0
-				elif str(Letters[HexLetters.index(letters[i])]) == "BSPACE":
-					
+				elif str(Letters[LetterPos]) == "BSPACE":
 					Result.append("\nBACKSPACE " )
 					String = 0
-				elif str(Letters[HexLetters.index(letters[i])]) == "TAB":
+				elif str(Letters[LetterPos]) == "TAB":
 					Result.append("\nTAB " )
 					String = 0
 				else:
-					Result.append(Letters[HexLetters.index(letters[i])])
+					Result.append(Letters[LetterPos])
 				Delay = 0
+		
 			
 			elif letters[i] in HexLetters and type[i] == "01":
+				LetterPos = HexLetters.index(letters[i]) # Again
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
-				Result.append("\nCONTROL " + str(AltLetters[HexLetters.index(letters[i])]))
+				Result.append("\nCONTROL " + str(AltLetters[LetterPos]))
 				Delay = 0
 				String = 0
 				
 			elif letters[i] in HexLetters and type[i] == "02":
+				LetterPos = HexLetters.index(letters[i]) # Again
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
 				
-				if String == 0 and str(CapLetters[HexLetters.index(letters[i])]) != "\n":
+				if String == 0 and str(CapLetters[LetterPos]) != "\n":
 					Result.append("\nSTRING " )
 					String = 1
-				if str(CapLetters[HexLetters.index(letters[i])]) == "\n":
+				if str(CapLetters[LetterPos]) == "\n":
 					Result.append("\nENTER " )
 					String = 0
-				if str(CapLetters[HexLetters.index(letters[i])]) == "BSPACE":
+				if str(CapLetters[LetterPos]) == "BSPACE":
 					Result.append("\nBACKSPACE " )
 					String = 0
 				else:
-					Result.append(CapLetters[HexLetters.index(letters[i])])
+					Result.append(CapLetters[LetterPos])
 				Delay = 0
 			
 			elif letters[i] in HexLetters and type[i] == "04":
+				LetterPos = HexLetters.index(letters[i]) # Again
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
-				Result.append("\nALT " + str(AltLetters[HexLetters.index(letters[i])]))
+				Result.append("\nALT " + str(AltLetters[LetterPos]))
 				Delay = 0
 				String = 0
 					
 			elif letters[i] in HexLetters and type[i] == "08":
+				LetterPos = HexLetters.index(letters[i]) # Again
 				if Delay != 0:
 					Result.append("\nDELAY " + str(Delay) + "\n")
-				Result.append("\nGUI " + str(AltLetters[HexLetters.index(letters[i])]))
+				Result.append("\nGUI " + str(AltLetters[LetterPos]))
 				Delay = 0
 				String = 0
 			
 
 				
 			elif letters[i] == '00':
-			
 				# DELAY command in duck code actually starts with 00,
 				# leaving only two hex digits (up to FF or 255) to specify the time
 				# to wait, this means that DELAY 500 in hex is 00FF 00F5, to merge
-				# these and prevent printing dumb delays
+				# these and prevent printing dumb delays like DELAY 255 DELAY 245 (500)
 				# we tell python to add them if there are right next to each other
 				# and store them in a variable.
 													
@@ -165,41 +183,56 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 										  #
 										  # Hello World!
 										  #
-
-		for i in range(0,len(letters)):
+		Arrow = 0 # Have we just printed an arrow?
+		for i in range(0,len(letters)): 
+			
+			
 		
-			if letters[i] in HexLetters and type[i] == "00":
+			if letters[i] in HexLetters and type[i] == "00":          #Lowercase, mode DISPLAY
+				LetterPos = HexLetters.index(letters[i]) # Again!
 				
-				if str(Letters[HexLetters.index(letters[i])]) == "BSPACE":
+				if str(Letters[LetterPos]) == "BSPACE":
 					del Result[int(len(Result)) - 1]
+					if Arrow == 1:
+						Result.append("\n")
+						Arrow = 0
+				elif str(Letters[LetterPos]) in Arrows:
+					Result.append("\n"+ str(Letters[LetterPos]))
+					Arrow = 1
 					
-				elif str(Letters[HexLetters.index(letters[i])]) == "TAB":
+				elif str(Letters[LetterPos]) == "TAB":
 					Result.append("     " )
-					
+					if Arrow == 1:
+						Result.append("\n")
+						Arrow = 0
 				else:
-					Result.append(Letters[HexLetters.index(letters[i])])
+					if Arrow == 1:
+						Result.append("\n")
+						Arrow = 0
+					Result.append(Letters[LetterPos])
+					
 					
 				
-			elif letters[i] in HexLetters and type[i] == "01":
+			elif letters[i] in HexLetters and type[i] == "01":       #ctrl key, mode DISPLAY
+				LetterPos = HexLetters.index(letters[i]) # Again!
+				Result.append("\nCONTROL " + str(AltLetters[LetterPos]) + "\n")
+				
+				
+				
+			elif letters[i] in HexLetters and type[i] == "02":       #Caps, mode DISPLAY
+				LetterPos = HexLetters.index(letters[i]) # Again!
+				Result.append(CapLetters[LetterPos])
+				
 			
-				Result.append("\nCONTROL " + str(AltLetters[HexLetters.index(letters[i])]) + "\n")
-				
-				
-				
-			elif letters[i] in HexLetters and type[i] == "02":
-
-				Result.append(CapLetters[HexLetters.index(letters[i])])
-				
-			
-			elif letters[i] in HexLetters and type[i] == "04":
-
-				Result.append("\nALT " + str(AltLetters[HexLetters.index(letters[i])]))
+			elif letters[i] in HexLetters and type[i] == "04":       #Alt key, mode DISPLAY
+				LetterPos = HexLetters.index(letters[i]) # Again!
+				Result.append("\nALT " + str(AltLetters[LetterPos]))
 				
 				
 					
-			elif letters[i] in HexLetters and type[i] == "08":
-
-				Result.append("\nGUI " + str(AltLetters[HexLetters.index(letters[i])]))
+			elif letters[i] in HexLetters and type[i] == "08":      #GUI key, mode DISLPLAY
+				LetterPos = HexLetters.index(letters[i]) # Again!
+				Result.append("\nGUI " + str(AltLetters[LetterPos]))
 				
 				
 
