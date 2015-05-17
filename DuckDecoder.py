@@ -42,7 +42,7 @@ def dsem(h, n):               # Here we take the hex bitstream and make a list o
 	
 	
   # Duck code needs two things to know what letter is sending, the first two characters specify the letter and the other two tell if there is a "modifier"
-  # key, so 00 means unmodified, 01 is control key, 02 is Caps, 04 is alt key and 08 is the "Windows" or "Command" key.
+  # key, so 00 means unmodified, 01 is control key, 02 is Caps, 04 is alt key, 05 ctrl-alt and 08 is the "Windows" or "Command" key.
 	
 
 	
@@ -68,12 +68,12 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 	Result = []
 	
 	# if lang == "en":           # languages will be supported adding lists on ifs, and default to english if variable not set.
-	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB", "UP", "DOWN", "RIGHT", "LEFT"]
-	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BSPACE",'~',"TAB"]
-	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0"]
-	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b','52','51','4f','50']
-#	HexTypes = ['00', '01', '02', '04', '08']
-	Arrows = [ "UP", "DOWN", "RIGHT", "LEFT"]
+	Letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",".","/",";","'","[","]","\\","-","="," ","\n","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB", "UP", "DOWN", "RIGHT", "LEFT", "DEL"]
+	CapLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","<",">","?",":","\"","{","}","|","_","+","SPACE","ENTER","!","@","#","$","%","^","&","*","(",")","BSPACE",'~',"TAB", "UP", "DOWN", "RIGHT", "LEFT"]
+	AltLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",",",".","/",";","'","[","]","\\","-","=","SPACE\n","ENTER","1","2","3","4","5","6","7","8","9","0","BSPACE",'`',"TAB", "UP", "DOWN", "RIGHT", "LEFT", "DEL"]
+	HexLetters = ['04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d','36', '37', '38', '33', '34', '2f', '30', '31', '2d', '2e', '2c', '28','1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27','2a','35','2b','52','51','4f','50','4c']
+#	HexTypes = ['00', '01', '02', '04', '05' '08'] ## Just to keep them handy
+
 	
 	
 	if mode == 1:                         # Mode 1 Converts the code and also adds all the "Commands" needed for re-encoding,
@@ -82,8 +82,10 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 										  # DELAY 400
 										  # STRING Hello World!
 										  # ENTER
+										  # I dont know if its better to display arrows in this mode or not.
+		NoStrKeys = ["\n", "BSPACE", "TAB", "DEL", "UP", "DOWN", "RIGHT", "LEFT"]
+		NoStrKReplace = ["ENTER", "BACKSPACE", "TAB", "DEL", "UP", "DOWN", "RIGHT", "LEFT"]
 		for i in range(0,len(letters)):
-			
 			if letters[i] in HexLetters and type[i] == "00":
 				LetterPos = HexLetters.index(letters[i]) # Lil shortcut for typing :P
 				if Delay != 0:
@@ -92,34 +94,26 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 					# it will print the value of Delay, which at this point is the total
 					# delay the original user described in the code (see comments below).
 					LastDelay = Result[int(len(Result)-1)]
-					if String == 0 and str(Letters[LetterPos]) != "\n" and Result[int(len(Result)-1)] == LastDelay:
+					if String == 0 and str(Letters[LetterPos]) != "\n" and Result[int(len(Result)-1)] == LastDelay and str(Letters[LetterPos]) != "BSPACE":
 						Result.append("\nSTRING " )
-						String = 0
+						String = 1
 						Delay = 0
 						Result.append(Letters[LetterPos])
 					else:
 						Result.append(Letters[LetterPos])
-						
-				elif str(Letters[LetterPos]) in Arrows:
-					Result.append("\n"+ str(Letters[LetterPos]))
+				
+				elif str(Letters[LetterPos]) in  NoStrKeys:
+					Result.append("\n" + str(NoStrKReplace[NoStrKeys.index(str(Letters[LetterPos]))]))
 					String = 0
-				elif String == 0 and str(Letters[LetterPos]) != "\n" and str(Letters[LetterPos]) != "TAB":
-					Result.append("\nSTRING " )
-					String = 1
-					Delay = 0
-					if String == 1:
-						Result.append(Letters[LetterPos])
-				elif str(Letters[LetterPos]) == "\n":
-					Result.append("\nENTER " )
-					String = 0
-				elif str(Letters[LetterPos]) == "BSPACE":
-					Result.append("\nBACKSPACE " )
-					String = 0
-				elif str(Letters[LetterPos]) == "TAB":
-					Result.append("\nTAB " )
-					String = 0
+
 				else:
-					Result.append(Letters[LetterPos])
+					if String == 0:
+						Result.append("\nSTRING " )
+						Result.append(Letters[LetterPos])
+						String = 1
+						Delay = 0
+					else:
+						Result.append(Letters[LetterPos])
 				Delay = 0
 		
 			
@@ -156,6 +150,14 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 				Result.append("\nALT " + str(AltLetters[LetterPos]))
 				Delay = 0
 				String = 0
+			
+			elif letters[i] in HexLetters and type[i] == "05":
+				LetterPos = HexLetters.index(letters[i]) # Again
+				if Delay != 0:
+					Result.append("\nDELAY " + str(Delay) + "\n")
+				Result.append("\nCTRL-ALT " + str(AltLetters[LetterPos]))
+				Delay = 0
+				String = 0
 					
 			elif letters[i] in HexLetters and type[i] == "08":
 				LetterPos = HexLetters.index(letters[i]) # Again
@@ -183,6 +185,7 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 										  #
 										  # Hello World!
 										  #
+		Arrows = ["UP", "DOWN", "RIGHT", "LEFT"]
 		Arrow = 0 # Have we just printed an arrow?
 		for i in range(0,len(letters)): 
 			
@@ -226,7 +229,7 @@ def letiscover(letters,type,mode):      # Function takes all the letter "C"odes 
 			
 			elif letters[i] in HexLetters and type[i] == "04":       #Alt key, mode DISPLAY
 				LetterPos = HexLetters.index(letters[i]) # Again!
-				Result.append("\nALT " + str(AltLetters[LetterPos]))
+				Result.append("\nALT " + str(AltLetters[LetterPos])+ "\n")
 				
 				
 					
@@ -254,11 +257,11 @@ if len(args) > 1 and len(args) < 5 :
 		filename = os.path.realpath(args[2])
 	except IndexError:
 		usage("Error: File not found", 1)
-	else:
-		List = dsem(hexstr(filename), 2)
-		mode = args[1]
-		chars = List[::2]
-		types = List[1::2]
+		
+	List = dsem(hexstr(filename), 2)
+	mode = args[1]
+	chars = List[::2]
+	types = List[1::2]
 
 	if mode == "decode":
 		Result = letiscover(chars,types,1)
